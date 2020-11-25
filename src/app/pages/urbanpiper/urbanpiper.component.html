@@ -1,11 +1,11 @@
 <div class=" content">
     <div class=" row">
         <div class=" col-md-12">
-            <div class=" card" *ngIf="!show">
+            <div class=" card" *ngIf="!showdetails">
                 <div class=" card-header">
                     <h4 class=" card-title">Urban Piper Table</h4>
                 </div>
-                <div class=" card-body">
+                <div class="card-body">
                     <div class=" table-responsive">
                         <table class=" table tablesorter" id="">
                             <thead class=" text-primary">
@@ -23,8 +23,8 @@
                                     <td>{{merchant.outlet_count}}</td>
                                     <td>{{merchant.created | date}}</td>
                                     <td>{{merchant.current_state}}</td>
-                                    <td><button mat-icon-button
-                                            aria-label="Example icon button with a vertical three dot icon">
+                                    <td><button mat-icon-button (click)="getmerchant(merchant.biz_id,merchant.name)"
+                                            aria-label="open_in_new icon button">
                                             <mat-icon>open_in_new</mat-icon>
                                         </button></td>
                                 </tr>
@@ -43,8 +43,66 @@
                     </div>
                 </div>
             </div>
+            <div *ngIf="showdetails" class=" card">
+                <div class=" card-header">
+                    <h5 class=" title">{{current_merchant.name}}</h5>
+                </div>
+                <div class=" card-body">
+                    <!-- <form> -->
+                    <div class=" row">
+                        <div class=" col-md-6 pr-md-1">
+                            <div class=" form-group">
+                                <label> ApiUsername </label>
+                                <input class=" form-control" [(ngModel)]="current_merchant.username"
+                                    placeholder="apiusername" type="text" value="Creative Code Inc." />
+                            </div>
+                        </div>
+                        <div class=" col-md-6 px-md-1">
+                            <div class=" form-group">
+                                <label> ApiKey </label>
+                                <input class=" form-control" [(ngModel)]="current_merchant.apikey" placeholder="apikey"
+                                    type="text" value="michael23" />
+                            </div>
+                        </div>
+                        <!-- <div class=" col-md-4 pl-md-1">
+                                <div class=" form-group">
+                                    <label for="exampleInputEmail1"> Email address </label>
+                                    <input class=" form-control" placeholder="mike@email.com" type="email" />
+                                </div>
+                            </div> -->
+                    </div>
+                    <button mat-raised-button (click)="getwebhooks()">See Webhooks</button>
+                    <mat-list role="list">
+                        <div mat-subheader>Configured Webhooks</div>
+                        <mat-list-item role="listitem" *ngFor="let webhook of current_merchant.webhooks">
+                            <div class="col-xl-4">{{webhook.event_type}}</div>
+                            <div class="col-xl-4" [class.text-green]="webhook.active" [class.text-red]=!webhook.active>status: {{webhook.active? 'active' : 'inactive'}}</div>
+                            <div class="col-xl-4">
+                                <button class="text-green" *ngIf="!webhook.active" mat-button (click)="getwebhooks()">Activate</button>
+                                <button  class="text-red" *ngIf="webhook.active" mat-button (click)="getwebhooks()">De Activate</button>
+                            </div>
+                        </mat-list-item>
+                        <mat-divider></mat-divider>
+                        <div mat-subheader>UnConfigured Webhooks</div>
+                        <mat-list-item role="listitem" *ngFor="let webhook of unconfiguredwebhooks">
+                            <div class="col-xl-4">{{webhook.name}}</div>
+                            <div class="col-xl-4"></div>
+                            <div class="col-xl-4">
+                                <button mat-icon-button (click)="getmerchant(merchant.biz_id,merchant.name)"
+                                            aria-label="open_in_new icon button">
+                                            <mat-icon>add</mat-icon>
+                                        </button>
+                            </div>
+                        </mat-list-item>
+                        <mat-divider></mat-divider>
+                    </mat-list>
+                    <!-- </form> -->
+                </div>
+                <div class=" card-footer">
+                    <button class=" btn btn-fill btn-danger" type="submit">Save</button>
+                </div>
+            </div>
         </div>
-
         <div class="info col-xl-12">
 
             <ng-container *ngIf="show">
