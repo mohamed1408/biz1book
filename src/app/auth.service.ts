@@ -12,13 +12,13 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   getissues() {
-    return this.http.get(this.base_url + "Issue/GetIssues");
+    return this.http.get(this.base_url1 + "Issue/GetIssues");
   }
   GetCompany() {
-    return this.http.get(this.base_url + "Company/GetAll");
+    return this.http.get(this.base_url1 + "Company/GetAll");
   }
   GetUPCompanies() {
-    return this.http.get(this.base_url + "Company/GetUPCompanies")
+    return this.http.get(this.base_url1 + "Company/GetUPCompanies")
   }
 
 
