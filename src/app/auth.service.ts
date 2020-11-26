@@ -33,6 +33,9 @@ export class AuthService {
   getmerchant(bizid) {
     return this.http.get(this.base_url + "Company/getbybizid?bizid=" + bizid);
   }
+  savemerchant(payload){
+    return this.http.post(this.base_url1 + 'Company/savemerchant', payload);
+  }
   getwebhooks(apikey) {
     return this.http.get("https://api.urbanpiper.com/external/api/v1/webhooks/", {
       headers: new HttpHeaders({
@@ -40,10 +43,18 @@ export class AuthService {
       })
     })
   }
-  addwebhook() {
-
+  addwebhook(payload,apikey) {
+    return this.http.post(`https://api.urbanpiper.com/external/api/v1/webhooks/`, payload, {
+      headers: new HttpHeaders({
+        'Authorization': "apikey "+apikey
+      })
+    })
   }
-  updatewebhook() {
-
+  updatewebhook(webhook_id,payload,apikey) {
+    return this.http.put(`https://api.urbanpiper.com/external/api/v1/webhooks/${webhook_id}`,payload, {
+      headers: new HttpHeaders({
+        'Authorization': "apikey "+apikey
+      })
+    })
   }
 }

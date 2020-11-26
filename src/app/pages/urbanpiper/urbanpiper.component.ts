@@ -18,7 +18,7 @@ export class UrbanpiperComponent implements OnInit {
   url: string | ArrayBuffer;
 
   merchants: any = [];
-  current_merchant = { name: '', username: '', apikey: '', webhooks: [] };
+  current_merchant: any;
   showdetails: boolean = false;
   gotdata: boolean = false;
   webhooks = [
@@ -56,16 +56,15 @@ export class UrbanpiperComponent implements OnInit {
     this.showdetails = true;
     this.auth.getmerchant(bizid).subscribe(data => {
       console.log(data);
+      this.current_merchant = data;
+      this.current_merchant.webhooks = [];
       this.current_merchant.name = merchant_name;
-      this.current_merchant.username = data["UPUsername"];
-      this.current_merchant.apikey = data["UPAPIKey"];
-
       this.gotdata = true;
     })
   }
   getwebhooks() {
-    if (this.current_merchant.username != '' && this.current_merchant.apikey != '') {
-      this.auth.getwebhooks(this.current_merchant.username + ':' + this.current_merchant.apikey).subscribe(data => {
+    if (this.current_merchant.UPUsername != '' && this.current_merchant.UPAPIKey != '') {
+      this.auth.getwebhooks(this.current_merchant.UPUsername + ':' + this.current_merchant.UPAPIKey).subscribe(data => {
         console.log(data)
         this.unconfiguredwebhooks = this.webhooks;
         data["webhooks"].forEach(hook => {
@@ -75,6 +74,45 @@ export class UrbanpiperComponent implements OnInit {
       })
     }
   }
+  savemerchant(){
+    this.auth.savemerchant(this.current_merchant).subscribe(data => {
+      console.log(data);      
+    })
+  }
+  updatewebhook(hook) {
+    var webhook = Object.assign({}, hook);
+    webhook.headers = JSON.parse(webhook.headers);
+    var webhook_id = webhook.webhook_id;
+    delete webhook.webhook_id;
+    webhook.active = !webhook.active;
+    if (this.current_merchant.UPUsername != '' && this.current_merchant.UPAPIKey != '') {
+      this.auth.updatewebhook(webhook_id, webhook, this.current_merchant.UPUsername + ':' + this.current_merchant.UPAPIKey).subscribe(data => {
+        console.log(data);
+        this.getwebhooks();
+      })
+    }
+  }
+  addwebhook(hook) {
+    var payload = {
+      "active": true,
+      "event_type": hook.name,
+      "retrial_interval_units": "seconds",
+      "url": hook.url,
+      "headers": {
+        "content-type": "application/json",
+        "Authorization": "Bearer "+this.current_merchant.jwt
+      }
+    }
+    console.log(payload);
+    this.auth.addwebhook(payload, this.current_merchant.UPUsername + ':' + this.current_merchant.UPAPIKey).subscribe(data => {
+      console.log(data);
+      this.getwebhooks();
+    })
+  }
+
+
+
+  ////////////////////////////////////////////////////////////////////
   getuptable() {
     this.auth.GetUPCompanies().subscribe(data => {
       console.log(data);
