@@ -34,7 +34,7 @@ export class AuthService {
     return this.http.get(this.base_url + "Company/getbybizid?bizid=" + bizid);
   }
   savemerchant(payload){
-    return this.http.post(this.base_url1 + 'Company/savemerchant', payload);
+    return this.http.post(this.base_url + 'Company/savemerchant', payload);
   }
   getwebhooks(apikey) {
     return this.http.get("https://api.urbanpiper.com/external/api/v1/webhooks/", {
